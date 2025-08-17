@@ -7,7 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EB59CA952E51A59A00AD621E /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = EB59CA942E51A59A00AD621E /* SwiftyJSON */; };
+		EB59CA982E51AAC000AD621E /* Cepheus in Frameworks */ = {isa = PBXBuildFile; productRef = EB59CA972E51AAC000AD621E /* Cepheus */; };
 		EB6A68702E5049920091E6EE /* WatchJM Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = EB6A686F2E5049920091E6EE /* WatchJM Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EB8AD7862E5208B6002ECA40 /* SDWebImageWebPCoder in Frameworks */ = {isa = PBXBuildFile; productRef = EB8AD7852E5208B6002ECA40 /* SDWebImageWebPCoder */; };
+		EB8AD7892E5208D4002ECA40 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = EB8AD7882E5208D4002ECA40 /* SDWebImageSwiftUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +56,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EB8AD7892E5208D4002ECA40 /* SDWebImageSwiftUI in Frameworks */,
+				EB59CA982E51AAC000AD621E /* Cepheus in Frameworks */,
+				EB59CA952E51A59A00AD621E /* SwiftyJSON in Frameworks */,
+				EB8AD7862E5208B6002ECA40 /* SDWebImageWebPCoder in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,6 +122,10 @@
 			);
 			name = "WatchJM Watch App";
 			packageProductDependencies = (
+				EB59CA942E51A59A00AD621E /* SwiftyJSON */,
+				EB59CA972E51AAC000AD621E /* Cepheus */,
+				EB8AD7852E5208B6002ECA40 /* SDWebImageWebPCoder */,
+				EB8AD7882E5208D4002ECA40 /* SDWebImageSwiftUI */,
 			);
 			productName = "WatchJM Watch App";
 			productReference = EB6A686F2E5049920091E6EE /* WatchJM Watch App.app */;
@@ -146,6 +158,12 @@
 			);
 			mainGroup = EB6A68622E5049920091E6EE;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				EB59CA932E51A59A00AD621E /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
+				EB59CA962E51AAC000AD621E /* XCRemoteSwiftPackageReference "Cepheus" */,
+				EB8AD7842E5208B6002ECA40 /* XCRemoteSwiftPackageReference "SDWebImageWebPCoder" */,
+				EB8AD7872E5208D4002ECA40 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EB6A686A2E5049920091E6EE /* Products */;
 			projectDirPath = "";
@@ -430,6 +448,64 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EB59CA932E51A59A00AD621E /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.2;
+			};
+		};
+		EB59CA962E51AAC000AD621E /* XCRemoteSwiftPackageReference "Cepheus" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Qastor-Studio/Cepheus";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		EB8AD7842E5208B6002ECA40 /* XCRemoteSwiftPackageReference "SDWebImageWebPCoder" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageWebPCoder";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.14.6;
+			};
+		};
+		EB8AD7872E5208D4002ECA40 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EB59CA942E51A59A00AD621E /* SwiftyJSON */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB59CA932E51A59A00AD621E /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
+			productName = SwiftyJSON;
+		};
+		EB59CA972E51AAC000AD621E /* Cepheus */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB59CA962E51AAC000AD621E /* XCRemoteSwiftPackageReference "Cepheus" */;
+			productName = Cepheus;
+		};
+		EB8AD7852E5208B6002ECA40 /* SDWebImageWebPCoder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB8AD7842E5208B6002ECA40 /* XCRemoteSwiftPackageReference "SDWebImageWebPCoder" */;
+			productName = SDWebImageWebPCoder;
+		};
+		EB8AD7882E5208D4002ECA40 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB8AD7872E5208D4002ECA40 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EB6A68632E5049920091E6EE /* Project object */;
 }

@@ -6,12 +6,18 @@
 //
 
 import SwiftUI
+import SDWebImageWebPCoder
+
 
 @main
 struct WatchJM_Watch_AppApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .onAppear{
+                    let WebPCoder = SDImageWebPCoder.shared
+                    SDImageCodersManager.shared.addCoder(WebPCoder)
+                }
         }
     }
 }
