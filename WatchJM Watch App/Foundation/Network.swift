@@ -24,4 +24,19 @@ struct Net{
         }
         return latency
     }
+    func GetRank(time:String = "month",jmurl:String) async throws -> [Album] {
+        var tempList:[Album] = []
+        guard let url = URL(string: jmurl+"rank/"+time) else {
+            throw URLError(.badURL)
+        }
+        let (data, response) = try await URLSession.shared.data(from: url)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+        let json = try! JSON(data: data)
+        for dic in json {
+            tempList.append(Album(title: dic.1["title"].string!, aid: dic.1["aid"].string!))
+        }
+        return tempList
+    }
 }
