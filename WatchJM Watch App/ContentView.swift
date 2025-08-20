@@ -9,6 +9,7 @@ import SwiftUI
 import Cepheus
 
 struct ContentView: View {
+    var jmurl:String = "http://127.0.0.1:8000"
     let NetWorkManager = Net()
     @State var rankList:[Album] = []
     @State var ms:String = ""
@@ -17,7 +18,7 @@ struct ContentView: View {
             VStack{
                 Text("连接延迟:"+ms+"ms")
                     List(rankList) { list in
-                        NavigationLink(destination: DetailView(album: list)){
+                        NavigationLink(destination: DetailView(jmurl: jmurl, album: list)){
                         Text(list.title)
                     }
                 }
@@ -28,12 +29,12 @@ struct ContentView: View {
                 do {
                     let currentDate = Date()
                     let timeInterval = currentDate.timeIntervalSince1970
-                    ms = try await NetWorkManager.Check(jmurl: "http://192.168.31.42:11111/", timeInterval: timeInterval)
+                    ms = try await NetWorkManager.Check(jmurl: jmurl, timeInterval: timeInterval)
                 } catch {
                     print("Error: \(error)")
                 }
                 do {
-                    rankList = try await NetWorkManager.GetRank(jmurl: "http://192.168.31.42:11111/")
+                    rankList = try await NetWorkManager.GetRank(jmurl: jmurl)
                 } catch {
                     print("Error: \(error)")
                 }

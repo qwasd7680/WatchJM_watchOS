@@ -11,13 +11,13 @@ import SDWebImageWebPCoder
 
 @main
 struct WatchJM_Watch_AppApp: App {
+    init() {
+            let WebPCoder = SDImageWebPCoder.shared
+            SDImageCodersManager.shared.addCoder(WebPCoder)
+        }
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .onAppear{
-                    let WebPCoder = SDImageWebPCoder.shared
-                    SDImageCodersManager.shared.addCoder(WebPCoder)
-                }
         }
     }
 }
