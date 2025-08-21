@@ -17,8 +17,8 @@ struct ContentView: View {
         NavigationView {
             VStack{
                 Text("连接延迟:"+ms+"ms")
-                    List(rankList) { list in
-                        NavigationLink(destination: DetailView(jmurl: jmurl, album: list)){
+                List(rankList) { list in
+                    NavigationLink(destination: DetailView(jmurl: jmurl, album: list)){
                         Text(list.title)
                     }
                 }
