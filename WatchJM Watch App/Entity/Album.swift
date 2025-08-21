@@ -11,5 +11,6 @@ struct Album: Identifiable {
     let id = UUID()
     let title: String
     let aid: String
-    var cover: String
+    var cover: String = ""
+    var tags:[String] = [""]
 }
