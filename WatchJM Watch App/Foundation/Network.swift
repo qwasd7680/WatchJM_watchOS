@@ -57,4 +57,15 @@ struct Net{
         album1.tags = tempTags
         return album1
     }
+    func downloadAlbum(jmurl:String,album:Album) async throws{
+        let fileurl = jmurl+"/download/album/"+album.aid
+        guard let url = URL(string: fileurl) else {
+            throw URLError(.badURL)
+        }
+        let fileName = "\(album.aid).zip"
+        let downloader = Downloader(originalURL: url, fileName: fileName)
+        let session = URLSession(configuration: .default, delegate: downloader, delegateQueue: nil)
+        let downloadTask = session.downloadTask(with: url)
+        downloadTask.resume()
+    }
 }

@@ -11,6 +11,7 @@ import SDWebImageSwiftUI
 struct DetailView: View {
     let NetWorkManager = Net()
     var jmurl:String
+    @State var isStartDownload = false
     @State var album:Album
     var body: some View{
         ScrollView{
@@ -45,6 +46,11 @@ struct DetailView: View {
                         }
                     }
                 }
+                Button(action:{
+                    isStartDownload.toggle()
+                }, label: {
+                    Text("开始下载")
+                })
             }
         }.onAppear{
             Task{
@@ -52,6 +58,13 @@ struct DetailView: View {
                     album = try await NetWorkManager.getInfo(jmurl: jmurl, album: album)
                 }catch{
                     print("Error: \(error)")
+                }
+                if isStartDownload{
+                    do{
+                        try await NetWorkManager.downloadAlbum(jmurl: jmurl, album: album)
+                    }catch{
+                        print("Error: \(error)")
+                    }
                 }
             }
         }
