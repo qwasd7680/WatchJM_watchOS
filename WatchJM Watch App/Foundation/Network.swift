@@ -57,15 +57,24 @@ struct Net{
         album1.tags = tempTags
         return album1
     }
-    func downloadAlbum(jmurl:String,album:Album) async throws{
-        let fileurl = jmurl+"/download/album/"+album.aid
-        guard let url = URL(string: fileurl) else {
+    func downloadAlbum(jmurl: String, album: Album) async throws -> URL {
+        let file = File()
+        let fileUrlString = jmurl + "/download/album/" + album.aid
+        
+        guard let url = URL(string: fileUrlString) else {
             throw URLError(.badURL)
         }
-        let fileName = "\(album.aid).zip"
-        let downloader = Downloader(originalURL: url, fileName: fileName)
-        let session = URLSession(configuration: .default, delegate: downloader, delegateQueue: nil)
-        let downloadTask = session.downloadTask(with: url)
-        downloadTask.resume()
+        
+        let (tempURL, response) = try await URLSession.shared.download(from: url)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+        let destinationURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(album.aid).zip")
+        if FileManager.default.fileExists(atPath: destinationURL.path) {
+            try FileManager.default.removeItem(at: destinationURL)
+        }
+        try FileManager.default.moveItem(at: tempURL, to: destinationURL)
+        return try file.unzip(zipFileURL: destinationURL)
     }
 }

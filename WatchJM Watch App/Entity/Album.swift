@@ -13,4 +13,5 @@ struct Album: Identifiable {
     let aid: String
     var cover: String = ""
     var tags:[String] = [""]
+    var url:URL? = nil
 }

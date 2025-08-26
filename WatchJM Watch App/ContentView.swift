@@ -9,7 +9,7 @@ import SwiftUI
 import Cepheus
 
 struct ContentView: View {
-    var jmurl:String = "http://192.168.31.42:11111"
+    var jmurl:String = "http://127.0.0.1:8000"
     let NetWorkManager = Net()
     @State var rankList:[Album] = []
     @State var ms:String = ""

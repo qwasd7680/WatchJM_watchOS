@@ -1,5 +1,5 @@
 {
-  "originHash" : "b07aa8c64332a574c18011c3abdacdb40f829cad472e9de14145ac9d33b0814e",
+  "originHash" : "4259e950383e9cb625647aea614618e221d758fa278c26088d323cf969f95b89",
   "pins" : [
     {
       "identity" : "cepheus",
@@ -53,6 +53,15 @@
       "state" : {
         "revision" : "af76cf3ef710b6ca5f8c05f3a31307d44a3c5828",
         "version" : "5.0.2"
+      }
+    },
+    {
+      "identity" : "zip",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/marmelroy/Zip",
+      "state" : {
+        "revision" : "67fa55813b9e7b3b9acee9c0ae501def28746d76",
+        "version" : "2.1.2"
       }
     }
   ],

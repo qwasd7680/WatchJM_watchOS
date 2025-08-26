@@ -10,6 +10,7 @@ import SDWebImageSwiftUI
 
 struct DetailView: View {
     let NetWorkManager = Net()
+    let file = File()
     var jmurl:String
     @State var isStartDownload = false
     @State var album:Album
@@ -45,23 +46,35 @@ struct DetailView: View {
                             }
                         }
                     }
+                    if album.url == nil {
+                        Button(action: {
+                            isStartDownload = true
+                            Task {
+                                do {
+                                    album.url = try await NetWorkManager.downloadAlbum(jmurl: jmurl, album: album)
+                                } catch {
+                                    print("Error: \(error)")
+                                }
+                                isStartDownload = false
+                            }
+                        }, label: {
+                            Text(isStartDownload ? "正在下载" : "开始下载")
+                        })
+                    } else {
+                        NavigationLink(destination: ComicReaderView(folderURL: album.url!)) {
+                            Text("开始阅读")
+                                .frame(maxWidth: .infinity)
+                                .buttonStyle(.borderedProminent)
+                                .tint(.green)
+                        }
+                    }
                 }
-                Button(action:{
-                    isStartDownload.toggle()
-                }, label: {
-                    Text("开始下载")
-                })
             }
         }.onAppear{
-            Task{
-                do{
-                    album = try await NetWorkManager.getInfo(jmurl: jmurl, album: album)
-                }catch{
-                    print("Error: \(error)")
-                }
-                if isStartDownload{
+            if album.tags == [""]{
+                Task{
                     do{
-                        try await NetWorkManager.downloadAlbum(jmurl: jmurl, album: album)
+                        album = try await NetWorkManager.getInfo(jmurl: jmurl, album: album)
                     }catch{
                         print("Error: \(error)")
                     }

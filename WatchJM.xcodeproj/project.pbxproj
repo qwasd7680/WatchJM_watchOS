@@ -10,6 +10,7 @@
 		EB59CA952E51A59A00AD621E /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = EB59CA942E51A59A00AD621E /* SwiftyJSON */; };
 		EB59CA982E51AAC000AD621E /* Cepheus in Frameworks */ = {isa = PBXBuildFile; productRef = EB59CA972E51AAC000AD621E /* Cepheus */; };
 		EB6A68702E5049920091E6EE /* WatchJM Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = EB6A686F2E5049920091E6EE /* WatchJM Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EB81854B2E5DE847002272C0 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = EB81854A2E5DE847002272C0 /* Zip */; };
 		EB8AD7862E5208B6002ECA40 /* SDWebImageWebPCoder in Frameworks */ = {isa = PBXBuildFile; productRef = EB8AD7852E5208B6002ECA40 /* SDWebImageWebPCoder */; };
 		EB8AD7892E5208D4002ECA40 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = EB8AD7882E5208D4002ECA40 /* SDWebImageSwiftUI */; };
 /* End PBXBuildFile section */
@@ -60,6 +61,7 @@
 				EB59CA982E51AAC000AD621E /* Cepheus in Frameworks */,
 				EB59CA952E51A59A00AD621E /* SwiftyJSON in Frameworks */,
 				EB8AD7862E5208B6002ECA40 /* SDWebImageWebPCoder in Frameworks */,
+				EB81854B2E5DE847002272C0 /* Zip in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -126,6 +128,7 @@
 				EB59CA972E51AAC000AD621E /* Cepheus */,
 				EB8AD7852E5208B6002ECA40 /* SDWebImageWebPCoder */,
 				EB8AD7882E5208D4002ECA40 /* SDWebImageSwiftUI */,
+				EB81854A2E5DE847002272C0 /* Zip */,
 			);
 			productName = "WatchJM Watch App";
 			productReference = EB6A686F2E5049920091E6EE /* WatchJM Watch App.app */;
@@ -163,6 +166,7 @@
 				EB59CA962E51AAC000AD621E /* XCRemoteSwiftPackageReference "Cepheus" */,
 				EB8AD7842E5208B6002ECA40 /* XCRemoteSwiftPackageReference "SDWebImageWebPCoder" */,
 				EB8AD7872E5208D4002ECA40 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				EB8185492E5DE847002272C0 /* XCRemoteSwiftPackageReference "Zip" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EB6A686A2E5049920091E6EE /* Products */;
@@ -466,6 +470,14 @@
 				kind = branch;
 			};
 		};
+		EB8185492E5DE847002272C0 /* XCRemoteSwiftPackageReference "Zip" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/marmelroy/Zip";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.2;
+			};
+		};
 		EB8AD7842E5208B6002ECA40 /* XCRemoteSwiftPackageReference "SDWebImageWebPCoder" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImageWebPCoder";
@@ -494,6 +506,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EB59CA962E51AAC000AD621E /* XCRemoteSwiftPackageReference "Cepheus" */;
 			productName = Cepheus;
+		};
+		EB81854A2E5DE847002272C0 /* Zip */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB8185492E5DE847002272C0 /* XCRemoteSwiftPackageReference "Zip" */;
+			productName = Zip;
 		};
 		EB8AD7852E5208B6002ECA40 /* SDWebImageWebPCoder */ = {
 			isa = XCSwiftPackageProductDependency;
