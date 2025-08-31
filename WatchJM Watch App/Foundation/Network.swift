@@ -64,8 +64,10 @@ struct Net{
         guard let url = URL(string: fileUrlString) else {
             throw URLError(.badURL)
         }
-        
-        let (tempURL, response) = try await URLSession.shared.download(from: url)
+        let configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForResource = 300
+        let customSession = URLSession(configuration: configuration)
+        let (tempURL, response) = try await customSession.download(from: url)
         
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw URLError(.badServerResponse)

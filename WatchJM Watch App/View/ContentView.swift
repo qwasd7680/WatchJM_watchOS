@@ -28,7 +28,7 @@ struct ContentView: View {
             Task {
                 do {
                     let currentDate = Date()
-                    let timeInterval = currentDate.timeIntervalSince1970
+                    let timeInterval = currentDate.timeIntervalSince1970 * 1000
                     ms = try await NetWorkManager.Check(jmurl: jmurl, timeInterval: timeInterval)
                 } catch {
                     print("Error: \(error)")

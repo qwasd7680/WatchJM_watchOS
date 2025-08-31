@@ -30,7 +30,7 @@ struct ZoomableImageView: View {
                 TapGesture(count: 2)
                     .onEnded {
                         withAnimation(.easeInOut) {
-                            currentScale = currentScale == 1.0 ? 2.0 : 1.0
+                            currentScale = currentScale == 1.0 ? 2.5 : 1.0
                             offset = .zero
                         }
                     }
