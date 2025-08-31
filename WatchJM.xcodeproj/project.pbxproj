@@ -44,9 +44,22 @@
 		EB6A686F2E5049920091E6EE /* WatchJM Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WatchJM Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		EBF6A69C2E648F3D003CAE5C /* Exceptions for "WatchJM Watch App" folder in "WatchJM Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"WatchJM-Watch-App-Info.plist",
+			);
+			target = EB6A686E2E5049920091E6EE /* WatchJM Watch App */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		EB6A68732E5049920091E6EE /* WatchJM Watch App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				EBF6A69C2E648F3D003CAE5C /* Exceptions for "WatchJM Watch App" folder in "WatchJM Watch App" target */,
+			);
 			path = "WatchJM Watch App";
 			sourceTree = "<group>";
 		};
@@ -341,6 +354,7 @@
 				DEVELOPMENT_TEAM = 32HF9YRXNS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "WatchJM-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = WatchJM;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
@@ -370,6 +384,7 @@
 				DEVELOPMENT_TEAM = 32HF9YRXNS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "WatchJM-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = WatchJM;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
