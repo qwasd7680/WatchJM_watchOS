@@ -24,7 +24,7 @@ struct ComicReaderView: View {
                 Text(error)
                     .foregroundColor(.red)
             } else if webpURLs.isEmpty {
-                Text("未找到任何 .webp 文件。")
+                Text("未找到任何 webp 文件。")
             } else {
                 ScrollView(.vertical) {
                     VStack(spacing: 0) {
