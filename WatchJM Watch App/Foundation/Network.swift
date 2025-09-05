@@ -57,17 +57,28 @@ struct Net{
         album1.tags = tempTags
         return album1
     }
-    func downloadAlbum(jmurl: String, album: Album) async throws -> URL {
-        let file = File()
+    func startdownload(jmurl: String, album: Album) async throws -> (URL?,Bool) {
         let fileUrlString = jmurl + "/download/album/" + album.aid
-        
         guard let url = URL(string: fileUrlString) else {
             throw URLError(.badURL)
         }
+        let (data, response) = try await URLSession.shared.data(from: url)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+        let json = try! JSON(data: data)
+        guard json["status"].string! == "success" else {
+            throw URLError(.fileDoesNotExist)
+        }
+            let file_name = json["file_name"].string!
+        return (URL(string: jmurl + "/download/" + file_name),true)
+        }
+    func downloadAlbum(fileUrl: URL, album: Album) async throws -> URL {
+        let file = File()
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForResource = 300
         let customSession = URLSession(configuration: configuration)
-        let (tempURL, response) = try await customSession.download(from: url)
+        let (tempURL, response) = try await customSession.download(from: fileUrl)
         
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw URLError(.badServerResponse)

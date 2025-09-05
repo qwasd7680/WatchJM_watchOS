@@ -12,8 +12,11 @@ struct DetailView: View {
     let NetWorkManager = Net()
     let file = File()
     var jmurl:String
+    @State var fileurl:URL? = nil
     @State var isStartDownload = false
     @State var album:Album
+    @State var isServerDownloaded = false
+    @State var isServerStartDownload = false
     var body: some View{
         ScrollView{
             VStack{
@@ -51,14 +54,17 @@ struct DetailView: View {
                             isStartDownload = true
                             Task {
                                 do {
-                                    album.url = try await NetWorkManager.downloadAlbum(jmurl: jmurl, album: album)
+                                    (fileurl, isServerDownloaded) = try await NetWorkManager.startdownload(jmurl: jmurl, album: album)
                                 } catch {
                                     print("Error: \(error)")
+                                }
+                                if isServerDownloaded {
+                                    album.url = try await NetWorkManager.downloadAlbum(fileUrl: fileurl!, album: album)
                                 }
                                 isStartDownload = false
                             }
                         }, label: {
-                            Text(isStartDownload ? "正在下载" : "开始下载")
+                            Text(isStartDownload ? (isServerDownloaded ? "正在下载" : "等待服务器端下载") : "开始下载")
                         })
                     } else {
                         NavigationLink(destination: ComicReaderView(folderURL: album.url!)) {
