@@ -8,7 +8,7 @@
 import Foundation
 import SwiftyJSON
 
-struct Net{
+class Net{
     func Check(jmurl:String,timeInterval:Double) async throws -> String {
         var latency = ""
         guard let url = URL(string: jmurl+"/"+String(Int(timeInterval))) else {
@@ -70,24 +70,42 @@ struct Net{
         guard json["status"].string! == "success" else {
             throw URLError(.fileDoesNotExist)
         }
-            let file_name = json["file_name"].string!
+        let file_name = json["file_name"].string!
         return (URL(string: jmurl + "/download/" + file_name),true)
-        }
-    func downloadAlbum(fileUrl: URL, album: Album) async throws -> URL {
-        let file = File()
-        let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForResource = 300
-        let customSession = URLSession(configuration: configuration)
-        let (tempURL, response) = try await customSession.download(from: fileUrl)
-        
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw URLError(.badServerResponse)
-        }
-        let destinationURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(album.aid).zip")
-        if FileManager.default.fileExists(atPath: destinationURL.path) {
-            try FileManager.default.removeItem(at: destinationURL)
-        }
-        try FileManager.default.moveItem(at: tempURL, to: destinationURL)
-        return try file.unzip(zipFileURL: destinationURL)
     }
+    func downloadAlbum(fileUrl: URL, album: Album, progressHandler: @escaping (Float) -> Void) async throws -> URL {
+            guard #available(iOS 15.0, macOS 12.0, *), let url = URL(string: fileUrl.absoluteString) else {
+                throw URLError(.unsupportedURL)
+            }
+            
+            let file = File()
+            
+            let (asyncBytes, response) = try await URLSession.shared.bytes(from: url)
+            
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                throw URLError(.badServerResponse)
+            }
+            
+            let totalBytes = httpResponse.expectedContentLength
+            var downloadedBytes: Int64 = 0
+            let tempDestinationURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).zip")
+            FileManager.default.createFile(atPath: tempDestinationURL.path, contents: nil, attributes: nil)
+            
+            let fileHandle = try FileHandle(forWritingTo: tempDestinationURL)
+            
+            for try await byte in asyncBytes {
+                try fileHandle.write(contentsOf: [byte])
+                downloadedBytes += 1
+                
+                if totalBytes > 0 {
+                    let progress = Float(Double(downloadedBytes) / Double(totalBytes))
+                    DispatchQueue.main.async {
+                        progressHandler(progress)
+                    }
+                }
+            }
+            
+            try fileHandle.close()
+            return try file.unzip(zipFileURL: tempDestinationURL)
+        }
 }

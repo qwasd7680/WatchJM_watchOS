@@ -16,7 +16,8 @@ struct DetailView: View {
     @State var isStartDownload = false
     @State var album:Album
     @State var isServerDownloaded = false
-    @State var isServerStartDownload = false
+    @State var downloadProgress: Float = 0.0
+
     var body: some View{
         ScrollView{
             VStack{
@@ -50,6 +51,18 @@ struct DetailView: View {
                         }
                     }
                     if album.url == nil {
+                        if isStartDownload {
+                            if isServerDownloaded {
+                                ProgressView(value: downloadProgress)
+                                    .progressViewStyle(.linear)
+                                    .padding()
+                                Text(String(format: "%.0f%%", downloadProgress * 100))
+                                    .font(.caption)
+                            } else {
+                                ProgressView()
+                            }
+                        }
+                        
                         Button(action: {
                             isStartDownload = true
                             Task {
@@ -59,13 +72,21 @@ struct DetailView: View {
                                     print("Error: \(error)")
                                 }
                                 if isServerDownloaded {
-                                    album.url = try await NetWorkManager.downloadAlbum(fileUrl: fileurl!, album: album)
+                                    do {
+                                        album.url = try await NetWorkManager.downloadAlbum(fileUrl: fileurl!, album: album) { progress in
+                                            self.downloadProgress = progress
+                                        }
+                                    } catch {
+                                        print("Download Error: \(error)")
+                                    }
                                 }
                                 isStartDownload = false
+                                self.downloadProgress = 0.0
                             }
                         }, label: {
                             Text(isStartDownload ? (isServerDownloaded ? "正在下载" : "等待服务器端下载") : "开始下载")
                         })
+                        .disabled(isStartDownload)
                     } else {
                         NavigationLink(destination: ComicReaderView(folderURL: album.url!)) {
                             Text("开始阅读")
