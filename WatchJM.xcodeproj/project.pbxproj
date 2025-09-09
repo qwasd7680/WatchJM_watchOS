@@ -341,7 +341,9 @@
 				DEVELOPMENT_TEAM = 32HF9YRXNS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/WatchJM Watch App/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = WatchJM;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -370,7 +372,9 @@
 				DEVELOPMENT_TEAM = 32HF9YRXNS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/WatchJM Watch App/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = WatchJM;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -396,6 +400,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 32HF9YRXNS;
+				INFOPLIST_FILE = "$(SRCROOT)/WatchJM Watch App/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = WatchJM;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Maverick-Charmer.WatchJM";
@@ -411,6 +416,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 32HF9YRXNS;
+				INFOPLIST_FILE = "$(SRCROOT)/WatchJM Watch App/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = WatchJM;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Maverick-Charmer.WatchJM";
