@@ -114,6 +114,10 @@ struct DetailView: View {
                         if album.tags == [""] {
                             album = try await NetWorkManager.getInfo(jmurl: jmurl, album: album)
                         }
+                    } catch {
+                        print(error)
+                    }
+                        do {
                         album.url = try file.isExist(album: album)
                         if album.url == nil {
                             coverURL = URL(string:jmurl + "/get/cover/" + album.cover)

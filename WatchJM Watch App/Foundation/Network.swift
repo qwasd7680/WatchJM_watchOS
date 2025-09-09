@@ -106,6 +106,6 @@ class Net{
             }
             
             try fileHandle.close()
-        return try file.unzip(zipFileURL: tempDestinationURL, album: album)
+        return try file.unzip(tempDestinationURL, album: album)
         }
 }

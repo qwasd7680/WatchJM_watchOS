@@ -9,21 +9,20 @@ import Foundation
 import Zip
 
 struct File {
-    func unzip(zipFileURL: URL, album: Album) throws -> URL {
+    func unzip(_ zipURL: URL, album: Album) throws -> URL {
         let fileManager = FileManager.default
         let documentsDirectory = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
-        do {
-            let unzippedFolderURL = try Zip.quickUnzipFile(zipFileURL)
-            let finalUnzippedFolderURL = documentsDirectory.appendingPathComponent(album.aid, isDirectory: true)
-            if fileManager.fileExists(atPath: finalUnzippedFolderURL.path) {
-                try fileManager.removeItem(at: finalUnzippedFolderURL)
-            }
-            try fileManager.moveItem(at: unzippedFolderURL, to: finalUnzippedFolderURL)
-            try fileManager.removeItem(at: zipFileURL)
-            return finalUnzippedFolderURL
-        } catch {
-            throw error
+        let downloadedAlbumURL = documentsDirectory.appendingPathComponent("DownloadedAlbum")
+        if !fileManager.fileExists(atPath: downloadedAlbumURL.path) {
+            try fileManager.createDirectory(at: downloadedAlbumURL, withIntermediateDirectories: true, attributes: nil)
         }
+        let finalUnzippedFolderURL = downloadedAlbumURL.appendingPathComponent(album.aid)
+        if fileManager.fileExists(atPath: finalUnzippedFolderURL.path) {
+            try fileManager.removeItem(at: finalUnzippedFolderURL)
+        }
+        try Zip.unzipFile(zipURL, destination: finalUnzippedFolderURL, overwrite: true, password: nil)
+        try fileManager.removeItem(at: zipURL)
+        return finalUnzippedFolderURL
     }
     func isExist(album: Album) throws -> URL? {
         let fileManager = FileManager.default
@@ -40,10 +39,20 @@ struct File {
         let destinationZipURL = documentsDirectory.appendingPathComponent(album.aid,isDirectory: true)
         let finalURL = destinationZipURL.appendingPathComponent("00001.webp")
         if fileManager.fileExists(atPath: finalURL.path) {
-            print(finalURL)
             return finalURL
         } else {
             throw URLError(.fileDoesNotExist)
         }
+    }
+    func DownloadedAlbumFinder() throws -> [URL?] {
+        var tmp:[URL?] = []
+        let fileManager = FileManager.default
+        let documentsDirectory = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+        let destinationURL = documentsDirectory.appendingPathComponent("DownloadedAlbum",isDirectory: true)
+        let contents = try fileManager.contentsOfDirectory(at: destinationURL,includingPropertiesForKeys: nil,options: [.skipsHiddenFiles])
+        for item in contents {
+            tmp.append(item)
+        }
+        return tmp
     }
 }
