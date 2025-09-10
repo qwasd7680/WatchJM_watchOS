@@ -1,8 +1,8 @@
 //
-//  DetailView.swift
-//  WatchJM
+// DetailView.swift
+// WatchJM
 //
-//  Created by 周敬博 on 2025/8/19.
+// Created by 周敬博 on 2025/8/19.
 //
 
 import SwiftUI
@@ -11,14 +11,19 @@ import SDWebImageSwiftUI
 struct DetailView: View {
     let NetWorkManager = Net()
     let file = File()
-    var jmurl:String
+    var jmurl: String
+    @State var fileurl: URL? = nil
     @State var isStartDownload = false
-    @State var album:Album
-    var body: some View{
-        ScrollView{
-            VStack{
-                if album.cover != "" {
-                    WebImage(url: URL(string:jmurl+"/get/cover/"+album.cover))
+    @State var album: Album
+    @State var isServerDownloaded = false
+    @State var downloadProgress: Float = 0.0
+    @State var coverURL: URL? = nil
+    
+    var body: some View {
+        ScrollView {
+            VStack {
+                if album.url != nil {
+                    WebImage(url: coverURL)
                         .resizable()
                         .indicator(.activity)
                         .transition(.fade(duration: 0.5))
@@ -27,15 +32,27 @@ struct DetailView: View {
                         .cornerRadius(12)
                         .shadow(radius: 5)
                         .padding(.bottom, 5)
-                }else{
+                } else if album.cover != "" {
+                    WebImage(url: URL(string: jmurl + "/get/cover/" + album.cover))
+                        .resizable()
+                        .indicator(.activity)
+                        .transition(.fade(duration: 0.5))
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity)
+                        .cornerRadius(12)
+                        .shadow(radius: 5)
+                        .padding(.bottom, 5)
+                } else {
                     ProgressView()
                 }
+                
                 Text(album.title)
                     .font(.title3)
-                if album.tags != [""]{
-                    ScrollView(.horizontal,showsIndicators: false){
-                        HStack{
-                            ForEach(album.tags,id: \.self) {tag in
+                
+                if album.tags != [""] {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(album.tags, id: \.self) { tag in
                                 Text(tag)
                                     .font(.footnote)
                                     .foregroundStyle(.secondary)
@@ -47,19 +64,40 @@ struct DetailView: View {
                         }
                     }
                     if album.url == nil {
+                        if isStartDownload {
+                            if isServerDownloaded {
+                                ProgressView(value: downloadProgress)
+                                    .progressViewStyle(.linear)
+                                    .padding()
+                                Text(String(format: "%.0f%%", downloadProgress * 100))
+                                    .font(.caption)
+                            } else {
+                                ProgressView()
+                            }
+                        }
+                        
                         Button(action: {
                             isStartDownload = true
                             Task {
                                 do {
-                                    album.url = try await NetWorkManager.downloadAlbum(jmurl: jmurl, album: album)
+                                    (fileurl, isServerDownloaded) = try await NetWorkManager.startdownload(jmurl: jmurl, album: album)
+                                    if isServerDownloaded {
+                                        album.url = try await NetWorkManager.downloadAlbum(fileUrl: fileurl!, album: album) { progress in
+                                            self.downloadProgress = progress
+                                        }
+                                    }
                                 } catch {
-                                    print("Error: \(error)")
+                                    print("Download Error: \(error)")
                                 }
+                                
                                 isStartDownload = false
+                                self.downloadProgress = 0.0
                             }
                         }, label: {
-                            Text(isStartDownload ? "正在下载" : "开始下载")
+                            Text(isStartDownload ? (isServerDownloaded ? "正在下载" : "等待服务器端下载") : "开始下载")
                         })
+                        .disabled(isStartDownload)
+                        
                     } else {
                         NavigationLink(destination: ComicReaderView(folderURL: album.url!)) {
                             Text("开始阅读")
@@ -70,13 +108,25 @@ struct DetailView: View {
                     }
                 }
             }
-        }.onAppear{
-            if album.tags == [""]{
-                Task{
-                    do{
-                        album = try await NetWorkManager.getInfo(jmurl: jmurl, album: album)
-                    }catch{
-                        print("Error: \(error)")
+            .onAppear {
+                Task {
+                    do {
+                        if album.tags == [""] {
+                            album = try await NetWorkManager.getInfo(jmurl: jmurl, album: album)
+                        }
+                    } catch {
+                        print(error)
+                    }
+                        do {
+                        album.url = try file.isExist(album: album)
+                        if album.url == nil {
+                            coverURL = URL(string:jmurl + "/get/cover/" + album.cover)
+                        }else{
+                            coverURL = try file.coverFinder(album: album)
+                        }
+                    } catch {
+                        print("OnAppear Error: \(error)")
+                        album.url = nil
                     }
                 }
             }
