@@ -44,9 +44,22 @@
 		EB6A686F2E5049920091E6EE /* WatchJM Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WatchJM Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		EB55F82D2E713C8F00E0E4BC /* Exceptions for "WatchJM Watch App" folder in "WatchJM Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = EB6A686E2E5049920091E6EE /* WatchJM Watch App */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		EB6A68732E5049920091E6EE /* WatchJM Watch App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				EB55F82D2E713C8F00E0E4BC /* Exceptions for "WatchJM Watch App" folder in "WatchJM Watch App" target */,
+			);
 			path = "WatchJM Watch App";
 			sourceTree = "<group>";
 		};
