@@ -77,35 +77,29 @@ class Net{
         guard #available(iOS 15.0, macOS 12.0, *), let url = URL(string: fileUrl.absoluteString) else {
             throw URLError(.unsupportedURL)
         }
-        
         let file = File()
-        
         let (asyncBytes, response) = try await URLSession.shared.bytes(from: url)
-        
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw URLError(.badServerResponse)
         }
-        
         let totalBytes = httpResponse.expectedContentLength
         var downloadedBytes: Int64 = 0
         let tempDestinationURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).zip")
-        FileManager.default.createFile(atPath: tempDestinationURL.path, contents: nil, attributes: nil)
-        
-        let fileHandle = try FileHandle(forWritingTo: tempDestinationURL)
-        
+        var downloadedData = Data()
+        let updateInterval: Int64 = 256 * 1024
+        var lastUpdateBytes: Int64 = 0
         for try await byte in asyncBytes {
-            try fileHandle.write(contentsOf: [byte])
+            downloadedData.append(byte)
             downloadedBytes += 1
-            
-            if totalBytes > 0 {
+            if downloadedBytes - lastUpdateBytes > updateInterval || downloadedBytes == totalBytes {
                 let progress = Float(Double(downloadedBytes) / Double(totalBytes))
                 DispatchQueue.main.async {
                     progressHandler(progress)
                 }
+                lastUpdateBytes = downloadedBytes
             }
         }
-        
-        try fileHandle.close()
+        try downloadedData.write(to: tempDestinationURL, options: .atomic)
         return try file.unzip(tempDestinationURL, album: album)
     }
 }
