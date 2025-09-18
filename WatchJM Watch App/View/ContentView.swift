@@ -11,7 +11,7 @@ import Cepheus
 struct MainView: View {
     let rankList:[Album]
     var jmurl:String
-    @State var ms:String
+    @Binding var ms:String
     @State var isGoToSearch = false
     var body: some View {
         NavigationView {
@@ -43,7 +43,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack{
             TabView{
-                MainView(rankList: rankList, jmurl: jmurl, ms: ms)
+                MainView(rankList: rankList, jmurl: jmurl, ms: $ms)
                     .tag(0)
                     .onAppear{
                         Task{
