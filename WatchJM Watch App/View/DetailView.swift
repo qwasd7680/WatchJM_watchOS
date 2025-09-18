@@ -117,7 +117,7 @@ struct DetailView: View {
                     } catch {
                         print(error)
                     }
-                        do {
+                    do {
                         album.url = try file.isExist(album: album)
                         if album.url == nil {
                             coverURL = URL(string:jmurl + "/get/cover/" + album.cover)

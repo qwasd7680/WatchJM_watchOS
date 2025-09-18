@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct Album: Identifiable {
-    let id = UUID()
+struct Album: Identifiable, Codable,Hashable{
+    let id: UUID
     let title: String
     let aid: String
     var cover: String = ""
