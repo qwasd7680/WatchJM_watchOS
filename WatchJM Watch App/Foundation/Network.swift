@@ -11,7 +11,7 @@ import SwiftyJSON
 class Net{
     func Check(jmurl:String,timeInterval:Double) async throws -> String {
         var latency = ""
-        guard let url = URL(string: jmurl+"/"+String(Int(timeInterval))) else {
+        guard let url = URL(string: jmurl+"/"+String(timeInterval)) else {
             throw URLError(.badURL)
         }
         let (data, response) = try await URLSession.shared.data(from: url)
@@ -74,9 +74,7 @@ class Net{
         return (URL(string: jmurl + "/download/" + file_name),true)
     }
     func downloadAlbum(fileUrl: URL, album: Album, progressHandler: @escaping (Float) -> Void) async throws -> URL {
-        guard #available(iOS 15.0, macOS 12.0, *), let url = URL(string: fileUrl.absoluteString) else {
-            throw URLError(.unsupportedURL)
-        }
+        let url = URL(string: fileUrl.absoluteString)!
         let file = File()
         let (asyncBytes, response) = try await URLSession.shared.bytes(from: url)
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
@@ -86,7 +84,7 @@ class Net{
         var downloadedBytes: Int64 = 0
         let tempDestinationURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).zip")
         var downloadedData = Data()
-        let updateInterval: Int64 = 256 * 1024
+        let updateInterval: Int64 = 512 * 1024
         var lastUpdateBytes: Int64 = 0
         for try await byte in asyncBytes {
             downloadedData.append(byte)

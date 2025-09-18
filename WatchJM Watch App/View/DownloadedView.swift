@@ -17,7 +17,7 @@ struct DownloadedView: View {
             VStack{
                 if downloadedAlbum.isEmpty != true {
                     List(downloadedAlbum,id: \.self) { Album in
-                        NavigationLink(destination: DownloadedDetailView(album: Album!, finderURL: file.DownloadedAlbumFinder(aid: Album!.aid)),){
+                        NavigationLink(destination: DownloadedDetailView(album: Album!, finderURL: file.DownloadedAlbumFinder(aid: Album!.aid))){
                             Text(Album?.title ?? "搜索中")
                         }
                     }
