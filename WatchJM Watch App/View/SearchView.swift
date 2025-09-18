@@ -59,7 +59,7 @@ struct SearchView:View {
         }
         let json = try! JSON(data: data)
         for dic in json {
-            tempList.append(Album(title: dic.1["title"].string!, aid: dic.1["album_id"].string!))
+            tempList.append(Album(id: UUID(), title: dic.1["title"].string!, aid: dic.1["album_id"].string!))
         }
         do {
             DispatchQueue.main.async {

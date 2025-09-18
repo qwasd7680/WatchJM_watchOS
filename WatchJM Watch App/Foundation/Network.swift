@@ -35,7 +35,7 @@ class Net{
         }
         let json = try! JSON(data: data)
         for dic in json {
-            tempList.append(Album(title: dic.1["title"].string!, aid: dic.1["aid"].string!))
+            tempList.append(Album(id: UUID(), title: dic.1["title"].string!, aid: dic.1["aid"].string!))
         }
         return tempList
     }
@@ -74,38 +74,38 @@ class Net{
         return (URL(string: jmurl + "/download/" + file_name),true)
     }
     func downloadAlbum(fileUrl: URL, album: Album, progressHandler: @escaping (Float) -> Void) async throws -> URL {
-            guard #available(iOS 15.0, macOS 12.0, *), let url = URL(string: fileUrl.absoluteString) else {
-                throw URLError(.unsupportedURL)
-            }
+        guard #available(iOS 15.0, macOS 12.0, *), let url = URL(string: fileUrl.absoluteString) else {
+            throw URLError(.unsupportedURL)
+        }
+        
+        let file = File()
+        
+        let (asyncBytes, response) = try await URLSession.shared.bytes(from: url)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+        
+        let totalBytes = httpResponse.expectedContentLength
+        var downloadedBytes: Int64 = 0
+        let tempDestinationURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).zip")
+        FileManager.default.createFile(atPath: tempDestinationURL.path, contents: nil, attributes: nil)
+        
+        let fileHandle = try FileHandle(forWritingTo: tempDestinationURL)
+        
+        for try await byte in asyncBytes {
+            try fileHandle.write(contentsOf: [byte])
+            downloadedBytes += 1
             
-            let file = File()
-            
-            let (asyncBytes, response) = try await URLSession.shared.bytes(from: url)
-            
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                throw URLError(.badServerResponse)
-            }
-            
-            let totalBytes = httpResponse.expectedContentLength
-            var downloadedBytes: Int64 = 0
-            let tempDestinationURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).zip")
-            FileManager.default.createFile(atPath: tempDestinationURL.path, contents: nil, attributes: nil)
-            
-            let fileHandle = try FileHandle(forWritingTo: tempDestinationURL)
-            
-            for try await byte in asyncBytes {
-                try fileHandle.write(contentsOf: [byte])
-                downloadedBytes += 1
-                
-                if totalBytes > 0 {
-                    let progress = Float(Double(downloadedBytes) / Double(totalBytes))
-                    DispatchQueue.main.async {
-                        progressHandler(progress)
-                    }
+            if totalBytes > 0 {
+                let progress = Float(Double(downloadedBytes) / Double(totalBytes))
+                DispatchQueue.main.async {
+                    progressHandler(progress)
                 }
             }
-            
-            try fileHandle.close()
-        return try file.unzip(tempDestinationURL, album: album)
         }
+        
+        try fileHandle.close()
+        return try file.unzip(tempDestinationURL, album: album)
+    }
 }
