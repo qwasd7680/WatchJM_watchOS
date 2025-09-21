@@ -48,7 +48,7 @@ struct File {
     }
     func DownloadedAlbumFinder(aid: String) -> URL? {
         let fileManager = FileManager.default
-        let documentsDirectory = try! fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+        let documentsDirectory = try! fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         let destinationURL = documentsDirectory.appendingPathComponent("DownloadedAlbum",isDirectory: true)
         let url = destinationURL.appendingPathComponent(aid, isDirectory: true)
         return url
@@ -92,6 +92,9 @@ struct File {
         do {
             let documentsDirectory = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
             let destinationURL = documentsDirectory.appendingPathComponent("DownloadedAlbum")
+            if !fileManager.fileExists(atPath: destinationURL.path) {
+                try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true, attributes: nil)
+            }
             let contents = try fileManager.contentsOfDirectory(at: destinationURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles])
             for item in contents {
                 let resourceValues = try item.resourceValues(forKeys: [.isDirectoryKey])
