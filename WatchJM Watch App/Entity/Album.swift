@@ -14,4 +14,8 @@ struct Album: Identifiable, Codable,Hashable{
     var cover: String = ""
     var tags:[String] = [""]
     var url:URL? = nil
+	var page_count = "0"
+	var likes = "0"
+	var views = "0"
+	var method: String? = nil
 }

@@ -75,6 +75,18 @@ struct DetailView: View {
                                 ProgressView()
                             }
                         }
+						HStack{
+							Image(systemName: "eye")
+							Text(album.views)
+							Spacer()
+							Image(systemName: "hand.thumbsup")
+							Text(album.likes)
+							Spacer()
+							if album.method! == "html" {
+								Image(systemName: "book.pages")
+								Text(album.page_count+"页")
+							}
+						}
                         
                         Button(action: {
                             isStartDownload = true

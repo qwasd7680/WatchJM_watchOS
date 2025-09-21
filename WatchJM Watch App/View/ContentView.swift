@@ -38,7 +38,7 @@ struct MainView: View {
 struct ContentView: View {
     @State var rankList:[Album] = []
     @State var ms:String = ""
-    var jmurl:String = "https://qwasd12w-jmcomic-api.hf.space"
+    var jmurl:String = "https://qwasd12w-jmcomic-api.hf.space/v1"
     let NetWorkManager = Net()
     var body: some View {
         NavigationStack{

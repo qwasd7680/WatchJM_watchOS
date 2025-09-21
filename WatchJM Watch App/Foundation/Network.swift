@@ -51,6 +51,10 @@ class Net{
         }
         let json = try! JSON(data: data)
         album1.cover = json["id"].string!
+		album1.page_count = json["page_count"].string!
+		album1.likes = json["like_count"].string!
+		album1.views = json["view_count"].string!
+		album1.method = json["method"].string!
         for tag in json["tag"].array!{
             tempTags.append(tag.string!)
         }

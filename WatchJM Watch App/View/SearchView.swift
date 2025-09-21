@@ -17,7 +17,7 @@ struct SearchView:View {
     @State var num = 1
     let NetWorkManager = Net()
     @AppStorage("useCepheus") var useCepheus:Bool = true
-    @AppStorage("jmurl") var jmurl = "https://qwasd12w-jmcomic-api.hf.space"
+    @AppStorage("jmurl") var jmurl = "https://qwasd12w-jmcomic-api.hf.space/v1"
     
     var body: some View {
         NavigationView{
