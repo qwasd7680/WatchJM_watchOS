@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Album: Identifiable, Codable,Hashable{
+struct Album: Identifiable, Codable, Hashable {
     let id: UUID
     let title: String
     let aid: String

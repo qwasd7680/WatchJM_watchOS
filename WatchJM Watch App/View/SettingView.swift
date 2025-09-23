@@ -41,9 +41,7 @@ struct SettingView: View {
     private func checkLatency() async {
         self.ms = "检查中..."
         do {
-            let currentDate = Date()
-            let timeInterval = currentDate.timeIntervalSince1970 * 1000
-            let latency = try await NetWorkManager.Check(jmurl: jmurl, timeInterval: timeInterval)
+            let latency = try await NetWorkManager.Check(jmurl: jmurl)
             self.ms = "\(latency)ms"
         } catch {
             self.ms = "无法连接"

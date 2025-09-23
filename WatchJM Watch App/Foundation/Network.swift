@@ -9,7 +9,9 @@ import Foundation
 import SwiftyJSON
 
 class Net{
-    func Check(jmurl:String,timeInterval:Double) async throws -> String {
+    func Check(jmurl:String) async throws -> String {
+		let currentDate = Date()
+		let timeInterval = currentDate.timeIntervalSince1970 * 1000
         var latency = ""
         guard let url = URL(string: jmurl+"/"+String(timeInterval)) else {
             throw URLError(.badURL)
