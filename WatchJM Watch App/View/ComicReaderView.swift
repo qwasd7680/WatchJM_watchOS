@@ -48,7 +48,7 @@ struct ComicReaderView: View {
             let fileURLs = try fileManager.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: nil)
             
             let sortedURLs = fileURLs
-                .filter { $0.pathExtension.lowercased() == "webp" }
+                .filter { $0.pathExtension.lowercased() == "webp" || $0.pathExtension.lowercased() == "gif" }
                 .sorted { $0.lastPathComponent.localizedStandardCompare($1.lastPathComponent) == .orderedAscending }
             
             self.webpURLs = sortedURLs
