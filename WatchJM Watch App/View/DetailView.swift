@@ -69,7 +69,7 @@ struct DetailView: View {
                                 ProgressView(value: downloadProgress)
                                     .progressViewStyle(.linear)
                                     .padding()
-                                Text(String(format: "%.0f%%", downloadProgress * 100))
+                                Text(String(format: "%f%%", downloadProgress * 100))
                                     .font(.caption)
                             } else {
                                 ProgressView()

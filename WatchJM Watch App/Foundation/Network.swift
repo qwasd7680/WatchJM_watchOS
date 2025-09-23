@@ -90,7 +90,7 @@ class Net{
         var downloadedBytes: Int64 = 0
         let tempDestinationURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).zip")
         var downloadedData = Data()
-        let updateInterval: Int64 = 512 * 1024
+        let updateInterval: Int64 = 256 * 1024
         var lastUpdateBytes: Int64 = 0
         for try await byte in asyncBytes {
             downloadedData.append(byte)
