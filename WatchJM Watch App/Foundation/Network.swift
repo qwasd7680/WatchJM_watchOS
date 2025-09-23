@@ -37,7 +37,7 @@ class Net{
         }
         let json = try! JSON(data: data)
         for dic in json {
-            tempList.append(Album(id: UUID(), title: dic.1["title"].string!, aid: dic.1["aid"].string!))
+			tempList.append(Album(id: UUID(), title: dic.1["title"].string!, aid: dic.1["aid"].string!))
         }
         return tempList
     }
