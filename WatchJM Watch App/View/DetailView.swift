@@ -134,7 +134,7 @@ struct DetailView: View {
                         if album.url == nil {
                             coverURL = URL(string:jmurl + "/get/cover/" + album.cover)
                         }else{
-                            coverURL = try file.coverFinder(album: album)
+							coverURL = try file.coverFinder(aid: album.aid)
                         }
                     } catch {
                         print("OnAppear Error: \(error)")
