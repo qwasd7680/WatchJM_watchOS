@@ -39,15 +39,15 @@ struct SettingView: View {
     }
     
     private func checkLatency() async {
-        self.ms = "检查中..."
-        do {
-            let latency = try await NetWorkManager.Check(jmurl: jmurl)
-            self.ms = "\(latency)ms"
-        } catch {
-            self.ms = "无法连接"
-            print("Latency Check Error: \(error)")
+            self.ms = "检查中..."
+            do {
+                let latency = try await NetWorkManager.Check(jmurl: jmurl)
+                self.ms = "\(latency)ms"
+            } catch {
+                self.ms = "无法连接"
+                print("Latency Check Error: \(error)")
+            }
         }
-    }
 }
 
 #Preview {

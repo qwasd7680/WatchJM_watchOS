@@ -76,7 +76,7 @@ struct DownloadedDetailView: View {
             }
             .onAppear {
                 do {
-                    coverURL = try file.coverFinder(album: album)
+					coverURL = try file.coverFinder(aid: album.aid)
                 } catch {
                     print(error)
                 }
