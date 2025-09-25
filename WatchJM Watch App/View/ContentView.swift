@@ -11,12 +11,10 @@ import Cepheus
 struct MainView: View {
     let rankList:[Album]
     var jmurl:String
-    @Binding var ms:String
     @State var isGoToSearch = false
     var body: some View {
         NavigationView {
             VStack{
-                Text("连接延迟:"+ms+"ms")
                 List(rankList) { list in
                     NavigationLink(destination: DetailView(jmurl: jmurl, album: list)){
                         Text(list.title)
@@ -37,21 +35,17 @@ struct MainView: View {
 
 struct ContentView: View {
     @State var rankList:[Album] = []
-    @State var ms:String = ""
-    var jmurl:String = "https://qwasd12w-jmcomic-api.hf.space/v1"
+    @AppStorage("jmurl") var jmurl = ""
     let NetWorkManager = Net()
     var body: some View {
         NavigationStack{
             TabView{
-                MainView(rankList: rankList, jmurl: jmurl, ms: $ms)
+                MainView(rankList: rankList, jmurl: jmurl)
                     .tag(0)
                     .onAppear{
                         Task{
                             do {
                                 rankList = try await NetWorkManager.GetRank(jmurl: jmurl)
-                                let currentDate = Date()
-                                let timeInterval = currentDate.timeIntervalSince1970 * 1000
-                                ms = try await NetWorkManager.Check(jmurl: jmurl, timeInterval: timeInterval)
                             } catch {
                                 print("Error: \(error)")
                             }
@@ -59,6 +53,8 @@ struct ContentView: View {
                     }
                 DownloadedView()
                     .tag(1)
+                SettingView()
+                    .tag(2)
             }
         }
     }

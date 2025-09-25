@@ -9,7 +9,9 @@ import Foundation
 import SwiftyJSON
 
 class Net{
-    func Check(jmurl:String,timeInterval:Double) async throws -> String {
+    func Check(jmurl:String) async throws -> String {
+		let currentDate = Date()
+		let timeInterval = currentDate.timeIntervalSince1970 * 1000
         var latency = ""
         guard let url = URL(string: jmurl+"/"+String(timeInterval)) else {
             throw URLError(.badURL)
@@ -35,7 +37,7 @@ class Net{
         }
         let json = try! JSON(data: data)
         for dic in json {
-            tempList.append(Album(id: UUID(), title: dic.1["title"].string!, aid: dic.1["aid"].string!))
+			tempList.append(Album(id: UUID(), title: dic.1["title"].string!, aid: dic.1["aid"].string!))
         }
         return tempList
     }
@@ -88,7 +90,7 @@ class Net{
         var downloadedBytes: Int64 = 0
         let tempDestinationURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).zip")
         var downloadedData = Data()
-        let updateInterval: Int64 = 512 * 1024
+        let updateInterval: Int64 = 256 * 1024
         var lastUpdateBytes: Int64 = 0
         for try await byte in asyncBytes {
             downloadedData.append(byte)

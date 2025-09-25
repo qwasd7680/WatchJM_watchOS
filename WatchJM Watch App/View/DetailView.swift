@@ -69,7 +69,7 @@ struct DetailView: View {
                                 ProgressView(value: downloadProgress)
                                     .progressViewStyle(.linear)
                                     .padding()
-                                Text(String(format: "%.0f%%", downloadProgress * 100))
+                                Text(String(format: "%f%%", downloadProgress * 100))
                                     .font(.caption)
                             } else {
                                 ProgressView()
@@ -130,11 +130,11 @@ struct DetailView: View {
                         print(error)
                     }
                     do {
-                        album.url = try file.isExist(album: album)
+						album.url = try file.isExist(aid: album.aid)
                         if album.url == nil {
                             coverURL = URL(string:jmurl + "/get/cover/" + album.cover)
                         }else{
-                            coverURL = try file.coverFinder(album: album)
+							coverURL = try file.coverFinder(aid: album.aid)
                         }
                     } catch {
                         print("OnAppear Error: \(error)")
