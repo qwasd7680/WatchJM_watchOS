@@ -52,7 +52,6 @@ class Net{
             throw URLError(.badServerResponse)
         }
         let json = try! JSON(data: data)
-        album1.cover = json["id"].string!
 		album1.page_count = json["page_count"].string!
 		album1.likes = json["like_count"].string!
 		album1.views = json["view_count"].string!
