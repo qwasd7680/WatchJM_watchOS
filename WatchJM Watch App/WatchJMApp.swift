@@ -12,14 +12,14 @@ import SDWebImageSwiftUI
 
 @main
 struct WatchJM_Watch_AppApp: App {
-    init() {
-        let WebPCoder = SDImageWebPCoder.shared
-        SDImageCodersManager.shared.addCoder(WebPCoder)
-        SDWebImageDownloader.shared.config.downloadTimeout = 60
-    }
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
-    }
+	init() {
+		let WebPCoder = SDImageWebPCoder.shared
+		SDImageCodersManager.shared.addCoder(WebPCoder)
+		SDWebImageDownloader.shared.config.downloadTimeout = 60
+	}
+	var body: some Scene {
+		WindowGroup {
+			ContentView()
+		}
+	}
 }
