@@ -2,7 +2,7 @@
 //  SearchView.swift
 //  WatchJM
 //
-//  Created by 周敬博 on 2025/9/10.
+//  Created by Maverick Charmer on 2025/9/10.
 //
 
 import SwiftUI

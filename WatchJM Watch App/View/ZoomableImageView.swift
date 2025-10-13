@@ -2,7 +2,7 @@
 //  ZoomableImageView.swift
 //  WatchJM
 //
-//  Created by 周敬博 on 2025/8/26.
+//  Created by Maverick Charmer on 2025/8/26.
 //
 
 

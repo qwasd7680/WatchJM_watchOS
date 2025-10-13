@@ -2,11 +2,12 @@
 //  Network.swift
 //  WatchJM
 //
-//  Created by 周敬博 on 2025/8/17.
+//  Created by Maverick Charmer on 2025/8/17.
 //
 
 import Foundation
 import SwiftyJSON
+import Alamofire
 
 class Net{
 	func Check(jmurl:String) async throws -> String {
@@ -16,17 +17,17 @@ class Net{
 		guard let url = URL(string: jmurl+"/"+String(timeInterval)) else {
 			throw URLError(.badURL)
 		}
-		let (data, response) = try await URLSession.shared.data(from: url)
-		guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-			throw URLError(.badServerResponse)
-		}
-		let json = try! JSON(data: data)
-		if json["status"] == "ok" && json["app"] == "jmcomic_server_api"{
-			latency = json["latency"].string!
+		AF.request(url).responseDecodable(of: CheckNet.self) { response in
+			switch response.result{
+			case .success(let data):
+				latency = data.latency
+			case .failure(let error):
+				print(error)
+			}
 		}
 		return latency
 	}
-	func GetRank(time:String = "month",jmurl:String) async throws -> [Album] {
+	func GetRank(time:String, jmurl:String) async throws -> [Album] {
 		var tempList:[Album] = []
 		guard let url = URL(string: jmurl+"/rank/"+time) else {
 			throw URLError(.badURL)
@@ -41,68 +42,73 @@ class Net{
 		}
 		return tempList
 	}
-	func getInfo(jmurl:String,album:Album) async throws -> Album{
-		var album1 = album
-		var tempTags:[String] = []
+	func getInfo(jmurl:String, album:Album) async throws -> Album{
+		var albumInfo: AlbumInfo? = nil
 		guard let url = URL(string: jmurl+"/info/"+album.aid) else {
 			throw URLError(.badURL)
 		}
-		let (data, response) = try await URLSession.shared.data(from: url)
-		guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-			throw URLError(.badServerResponse)
-		}
-		let json = try! JSON(data: data)
-		album1.page_count = json["page_count"].string!
-		album1.likes = json["like_count"].string!
-		album1.views = json["view_count"].string!
-		album1.method = json["method"].string!
-		for tag in json["tag"].array!{
-			tempTags.append(tag.string!)
-		}
-		album1.tags = tempTags
-		return album1
-	}
-	func startdownload(jmurl: String, album: Album) async throws -> (URL?,Bool) {
-		let fileUrlString = jmurl + "/download/album/" + album.aid
-		guard let url = URL(string: fileUrlString) else {
-			throw URLError(.badURL)
-		}
-		let (data, response) = try await URLSession.shared.data(from: url)
-		guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-			throw URLError(.badServerResponse)
-		}
-		let json = try! JSON(data: data)
-		guard json["status"].string! == "success" else {
-			throw URLError(.fileDoesNotExist)
-		}
-		let file_name = json["file_name"].string!
-		return (URL(string: jmurl + "/download/" + file_name),true)
-	}
-	func downloadAlbum(fileUrl: URL, album: Album, progressHandler: @escaping (Float) -> Void) async throws -> URL {
-		let url = URL(string: fileUrl.absoluteString)!
-		let file = File()
-		let (asyncBytes, response) = try await URLSession.shared.bytes(from: url)
-		guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-			throw URLError(.badServerResponse)
-		}
-		let totalBytes = httpResponse.expectedContentLength
-		var downloadedBytes: Int64 = 0
-		let tempDestinationURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).zip")
-		var downloadedData = Data()
-		let updateInterval: Int64 = 256 * 1024
-		var lastUpdateBytes: Int64 = 0
-		for try await byte in asyncBytes {
-			downloadedData.append(byte)
-			downloadedBytes += 1
-			if downloadedBytes - lastUpdateBytes > updateInterval || downloadedBytes == totalBytes {
-				let progress = Float(Double(downloadedBytes) / Double(totalBytes))
-				DispatchQueue.main.async {
-					progressHandler(progress)
-				}
-				lastUpdateBytes = downloadedBytes
+		AF.request(url).responseDecodable(of: AlbumInfo.self) { response in
+			switch response.result {
+			case .success(let data):
+				albumInfo = data
+			case .failure(let error):
+				print(error)
 			}
 		}
-		try downloadedData.write(to: tempDestinationURL, options: .atomic)
+		return mixInfo(Info: albumInfo!, album:album)
+	}
+	func initiateDownloadTask(jmurl: String, albumID: String, clientID: String) async throws -> DownloadTaskInitiationResponse {
+		var responseModel:DownloadTaskInitiationResponse? = nil
+		guard let url = URL(string: jmurl + "/v1/download/album/" + albumID) else {
+			throw URLError(.badURL)
+		}
+		let parameters: [String:Any] = [
+			"client_id":clientID
+		]
+		AF.request(url, method: .post, parameters: parameters).responseDecodable(of: DownloadTaskInitiationResponse.self) { response in
+			switch response.result {
+			case .success(let data):
+				responseModel = data
+			case .failure(let error):
+				print(error)
+			}
+		}
+		return responseModel!
+	}
+	func downloadAlbum(jmurl: String, fileName: String, album: Album, progressHandler: @escaping (Double) -> Void) async throws -> URL {
+		//TODO: 中断后下载
+//		var resumeData: Data?
+		guard let url = URL(string: jmurl + "/v1/download/" + fileName) else {
+			throw URLError(.badURL)
+		}
+		let file = File()
+		let tempDestinationURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).zip")
+		let destination: DownloadRequest.Destination = { _, _ in
+			return (tempDestinationURL, [.removePreviousFile, .createIntermediateDirectories])
+		}
+		AF.download(url, to: destination).downloadProgress { progress in
+			DispatchQueue.main.async {
+				progressHandler(progress.fractionCompleted)
+			}
+		}/*.response { response in
+			if let error = response.error {
+				resumeData = response.resumeData
+				print("下载失败，错误：\(error)")
+			} else if let fileURL = response.fileURL {
+				print("文件下载至：\(fileURL)")
+			}
+		}
+		
+		// 恢复下载
+		if let resumeData = resumeData {
+			AF.download(resumingWith: resumeData, to: destination).response { response in
+				if let error = response.error {
+					print("恢复失败，错误：\(error)")
+				} else if let fileURL = response.fileURL {
+					print("文件下载至：\(fileURL)")
+				}
+			}
+		}*/
 		return try file.unzip(tempDestinationURL, album: album)
 	}
 }

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EB5520502E9D148500FA920B /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = EB55204F2E9D148500FA920B /* Alamofire */; };
+		EB5520522E9D148500FA920B /* AlamofireDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = EB5520512E9D148500FA920B /* AlamofireDynamic */; };
 		EB59CA952E51A59A00AD621E /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = EB59CA942E51A59A00AD621E /* SwiftyJSON */; };
 		EB59CA982E51AAC000AD621E /* Cepheus in Frameworks */ = {isa = PBXBuildFile; productRef = EB59CA972E51AAC000AD621E /* Cepheus */; };
 		EB6A68702E5049920091E6EE /* WatchJM Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = EB6A686F2E5049920091E6EE /* WatchJM Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -73,6 +75,8 @@
 				EB8AD7892E5208D4002ECA40 /* SDWebImageSwiftUI in Frameworks */,
 				EB59CA982E51AAC000AD621E /* Cepheus in Frameworks */,
 				EB59CA952E51A59A00AD621E /* SwiftyJSON in Frameworks */,
+				EB5520502E9D148500FA920B /* Alamofire in Frameworks */,
+				EB5520522E9D148500FA920B /* AlamofireDynamic in Frameworks */,
 				EB8AD7862E5208B6002ECA40 /* SDWebImageWebPCoder in Frameworks */,
 				EB81854B2E5DE847002272C0 /* Zip in Frameworks */,
 			);
@@ -142,6 +146,8 @@
 				EB8AD7852E5208B6002ECA40 /* SDWebImageWebPCoder */,
 				EB8AD7882E5208D4002ECA40 /* SDWebImageSwiftUI */,
 				EB81854A2E5DE847002272C0 /* Zip */,
+				EB55204F2E9D148500FA920B /* Alamofire */,
+				EB5520512E9D148500FA920B /* AlamofireDynamic */,
 			);
 			productName = "WatchJM Watch App";
 			productReference = EB6A686F2E5049920091E6EE /* WatchJM Watch App.app */;
@@ -180,6 +186,7 @@
 				EB8AD7842E5208B6002ECA40 /* XCRemoteSwiftPackageReference "SDWebImageWebPCoder" */,
 				EB8AD7872E5208D4002ECA40 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				EB8185492E5DE847002272C0 /* XCRemoteSwiftPackageReference "Zip" */,
+				EB55204E2E9D148500FA920B /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EB6A686A2E5049920091E6EE /* Products */;
@@ -477,6 +484,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		EB55204E2E9D148500FA920B /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
 		EB59CA932E51A59A00AD621E /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON";
@@ -520,6 +535,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		EB55204F2E9D148500FA920B /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB55204E2E9D148500FA920B /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		EB5520512E9D148500FA920B /* AlamofireDynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB55204E2E9D148500FA920B /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = AlamofireDynamic;
+		};
 		EB59CA942E51A59A00AD621E /* SwiftyJSON */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EB59CA932E51A59A00AD621E /* XCRemoteSwiftPackageReference "SwiftyJSON" */;

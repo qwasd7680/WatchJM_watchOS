@@ -2,7 +2,7 @@
 // DetailView.swift
 // WatchJM
 //
-// Created by 周敬博 on 2025/8/19.
+// Created by Maverick Charmer on 2025/8/19.
 //
 
 import SwiftUI
@@ -76,6 +76,7 @@ struct DetailView: View {
 							}
 						}
 						HStack{
+							Spacer()
 							Image(systemName: "eye")
 							Text(album.views)
 							Spacer()
@@ -85,6 +86,7 @@ struct DetailView: View {
 							if album.method! == "html" {
 								Image(systemName: "book.pages")
 								Text(album.page_count+"页")
+								Spacer()
 							}
 						}
 						

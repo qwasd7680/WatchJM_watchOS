@@ -2,7 +2,7 @@
 //  ComicReaderView.swift
 //  WatchJM
 //
-//  Created by 周敬博 on 2025/8/26.
+//  Created by Maverick Charmer on 2025/8/26.
 //
 
 
@@ -12,7 +12,7 @@ import SDWebImageSwiftUI
 struct ComicReaderView: View {
 	let folderURL: URL
 	
-	@State private var webpURLs: [URL] = []
+	@State private var PicURLs: [URL] = []
 	@State private var isLoading = true
 	@State private var errorMessage: String? = nil
 	
@@ -23,12 +23,12 @@ struct ComicReaderView: View {
 			} else if let error = errorMessage {
 				Text(error)
 					.foregroundColor(.red)
-			} else if webpURLs.isEmpty {
+			} else if PicURLs.isEmpty {
 				Text("未找到任何 webp 文件。")
 			} else {
 				ScrollView(.vertical) {
 					VStack(spacing: 0) {
-						ForEach(webpURLs, id: \.self) { url in
+						ForEach(PicURLs, id: \.self) { url in
 							ZoomableImageView(imageURL: url)
 						}
 					}
@@ -51,7 +51,7 @@ struct ComicReaderView: View {
 				.filter { $0.pathExtension.lowercased() == "webp" || $0.pathExtension.lowercased() == "gif" }
 				.sorted { $0.lastPathComponent.localizedStandardCompare($1.lastPathComponent) == .orderedAscending }
 			
-			self.webpURLs = sortedURLs
+			self.PicURLs = sortedURLs
 			self.isLoading = false
 			
 		} catch {

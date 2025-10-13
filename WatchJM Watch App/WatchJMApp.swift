@@ -2,7 +2,7 @@
 //  WatchJMApp.swift
 //  WatchJM Watch App
 //
-//  Created by 周敬博 on 2025/8/16.
+//  Created by Maverick Charmer on 2025/8/16.
 //
 
 import SwiftUI
