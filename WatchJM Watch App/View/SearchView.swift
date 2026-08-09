@@ -1,70 +1,51 @@
 //
-//  SearchView.swift
-//  WatchJM
+//  SearchView.swift
+//  WatchJM
 //
-//  Created by 周敬博 on 2025/9/10.
+//  Created by 周敬博 on 2025/9/10.
 //
 
 import SwiftUI
 import Cepheus
-import SwiftyJSON
 
-struct SearchView:View {
-    @State var content:String = ""
-    @State private var badNetwork = false
-    @State var rankList:[Album] = []
-    @State var isNotSearched = true
-    @State var num = 1
-    let NetWorkManager = Net()
-    @AppStorage("useCepheus") var useCepheus:Bool = true
+struct SearchView: View {
+    @State private var content: String = ""
+    @State private var viewModel = SearchViewModel()
+    @AppStorage("useCepheus") var useCepheus: Bool = true
     @AppStorage("jmurl") var jmurl = "https://qwasd12w-jmcomic-api.hf.space/v1"
-    
+
     var body: some View {
-        NavigationView{
+        NavigationStack {
             ZStack {
-                if rankList.isEmpty {
-                    CepheusKeyboard(input: $content,
-                                    prompt: "请输入要搜索的内容",
-                                    CepheusIsEnabled: useCepheus, allowEmojis: false,
-                                    onSubmit: {
-                        Task{
-                            do {
-                                try await searchAlbum(jmurl: jmurl, content: content, num: num)
-                            }catch{
-                                print(error)
-                            }
+                if viewModel.results.isEmpty && !viewModel.hasSearched {
+                    CepheusKeyboard(
+                        input: $content,
+                        prompt: "请输入要搜索的内容",
+                        CepheusIsEnabled: useCepheus,
+                        allowEmojis: false,
+                        onSubmit: {
+                            viewModel.searchQuery = content
+                            Task { await viewModel.search(jmurl: jmurl) }
                         }
-                    })
-                } else {
-                    List(rankList) { list in
-                        NavigationLink(destination: DetailView(jmurl: jmurl, album: list)){
-                            Text(list.title)
+                    )
+                } else if viewModel.isLoading && viewModel.results.isEmpty {
+                    ProgressView("搜索中...")
+                } else if let error = viewModel.errorMessage, viewModel.results.isEmpty {
+                    VStack(spacing: 8) {
+                        Text(error)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                        Button("重试") {
+                            Task { await viewModel.search(jmurl: jmurl) }
                         }
                     }
-                    if rankList.isEmpty && !badNetwork {
-                        ProgressView()
+                } else {
+                    List(viewModel.results) { album in
+                        NavigationLink(destination: DetailView(jmurl: jmurl, album: album)) {
+                            Text(album.title)
+                        }
                     }
                 }
-            }
-        }
-    }
-    func searchAlbum(jmurl:String,content:String,num:Int) async throws {
-        var tempList:[Album] = []
-        guard let url = URL(string: jmurl+"/search/"+content+"/"+String(num)) else {
-            throw URLError(.badURL)
-        }
-        let (data, response) = try await URLSession.shared.data(from: url)
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw URLError(.badServerResponse)
-        }
-        let json = try! JSON(data: data)
-        for dic in json {
-            tempList.append(Album(id: UUID(), title: dic.1["title"].string!, aid: dic.1["album_id"].string!))
-        }
-        do {
-            DispatchQueue.main.async {
-                self.rankList = tempList
-                self.isNotSearched.toggle()
             }
         }
     }

@@ -9,26 +9,32 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct DownloadedView: View {
-    let file = File()
-    @State var downloadedAlbumID: [String]?
-    @State var downloadedAlbum: [Album?] = []
+    @State private var viewModel = DownloadedViewModel()
+
     var body: some View {
-        NavigationView {
-            VStack{
-                if downloadedAlbum.isEmpty != true {
-                    List(downloadedAlbum,id: \.self) { Album in
-                        NavigationLink(destination: DownloadedDetailView(album: Album!, finderURL: file.DownloadedAlbumFinder(aid: Album!.aid))){
-                            Text(Album?.title ?? "搜索中")
+        NavigationStack {
+            VStack {
+                if viewModel.isLoading {
+                    ProgressView("加载中...")
+                } else if viewModel.albums.isEmpty {
+                    Text("暂无已下载的本子")
+                        .foregroundStyle(.secondary)
+                } else {
+                    List(viewModel.albums) { album in
+                        let finderURL = File().DownloadedAlbumFinder(aid: album.aid)
+                        if let finderURL = finderURL {
+                            NavigationLink(destination: DownloadedDetailView(album: album, finderURL: finderURL)) {
+                                Text(album.title)
+                            }
+                        } else {
+                            Text(album.title)
+                                .foregroundStyle(.secondary)
                         }
                     }
                 }
-            }.onAppear{
-                downloadedAlbumID = file.getSubdirectories() ?? []
-                for albumID in downloadedAlbumID! {
-                    if downloadedAlbum.contains(file.JSON2Album(aid: albumID)) != true {
-                        downloadedAlbum.append(file.JSON2Album(aid: albumID) ?? nil)
-                    }
-                }
+            }
+            .onAppear {
+                viewModel.loadDownloadedAlbums()
             }
         }
     }
@@ -36,49 +42,58 @@ struct DownloadedView: View {
 
 struct DownloadedDetailView: View {
     @State var album: Album
-    @State var coverURL: URL? = nil
-    @State var finderURL: URL?
+    @State private var coverURL: URL? = nil
+    let finderURL: URL
     let file = File()
+
     var body: some View {
         ScrollView {
             VStack {
-                WebImage(url: coverURL)
-                    .resizable()
-                    .indicator(.activity)
-                    .transition(.fade(duration: 0.5))
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity)
-                    .cornerRadius(12)
-                    .shadow(radius: 5)
-                    .padding(.bottom, 5)
-                
+                if let coverURL = coverURL {
+                    WebImage(url: coverURL)
+                        .resizable()
+                        .indicator(.activity)
+                        .transition(.fade(duration: 0.5))
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity)
+                        .cornerRadius(12)
+                        .shadow(radius: 5)
+                        .padding(.bottom, 5)
+                } else {
+                    ProgressView()
+                }
+
                 Text(album.title)
                     .font(.title3)
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(album.tags, id: \.self) { tag in
-                            Text(tag)
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.gray)
-                                .cornerRadius(6)
+
+                if !album.tags.isEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(album.tags, id: \.self) { tag in
+                                Text(tag)
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.gray)
+                                    .cornerRadius(6)
+                            }
                         }
                     }
                 }
-                NavigationLink(destination: ComicReaderView(folderURL: finderURL!)) {
+
+                NavigationLink(destination: ComicReaderView(folderURL: finderURL)) {
                     Text("开始阅读")
                         .frame(maxWidth: .infinity)
-                        .buttonStyle(.borderedProminent)
-                        .tint(.green)
                 }
+                .buttonStyle(.borderedProminent)
+                .tint(.green)
             }
             .onAppear {
                 do {
-					coverURL = try file.coverFinder(aid: album.aid)
+                    coverURL = try file.coverFinder(aid: album.aid)
                 } catch {
-                    print(error)
+                    print("Cover finder error: \(error)")
                 }
             }
         }

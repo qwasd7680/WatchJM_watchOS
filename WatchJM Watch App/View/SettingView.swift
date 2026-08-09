@@ -8,46 +8,34 @@
 import SwiftUI
 
 struct SettingView: View {
-    let NetWorkManager = Net()
-    @State var ms:String = "检查中..."
+    @State private var viewModel = SettingsViewModel()
     @AppStorage("jmurl") var jmurl: String = "https://qwasd12w-jmcomic-api.hf.space/v1"
 
     var body: some View {
-        NavigationView {
-                Form {
-                    Section(header: Text("API URL")) {
-                        TextField("Enter JMComic API URL", text: $jmurl)
-						HStack{
-							Text("连接延迟: \(ms)")
-							Spacer()
-							Text(ms.hasSuffix("ms") ? "✅" : "❌")
-						}
+        NavigationStack {
+            Form {
+                Section(header: Text("API URL")) {
+                    TextField("Enter JMComic API URL", text: $jmurl)
+                    HStack {
+                        Text("连接延迟: \(viewModel.latencyText)")
+                        Spacer()
+                        if viewModel.isChecking {
+                            ProgressView()
+                        } else {
+                            Text(viewModel.latencyText.hasSuffix("ms") ? "✅" : "❌")
+                        }
                     }
                 }
-                .navigationTitle("Settings")
-        }
-        .onAppear{
-            Task{
-                await checkLatency()
             }
+            .navigationTitle("Settings")
+        }
+        .onAppear {
+            Task { await viewModel.checkLatency(jmurl: jmurl) }
         }
         .onChange(of: jmurl) {
-            Task {
-                await checkLatency()
-            }
+            Task { await viewModel.checkLatency(jmurl: jmurl) }
         }
     }
-    
-    private func checkLatency() async {
-            self.ms = "检查中..."
-            do {
-                let latency = try await NetWorkManager.Check(jmurl: jmurl)
-                self.ms = "\(latency)ms"
-            } catch {
-                self.ms = "无法连接"
-                print("Latency Check Error: \(error)")
-            }
-        }
 }
 
 #Preview {

@@ -106,7 +106,9 @@ struct File {
     func DownloadedAlbumFinder(aid: String) -> URL? {
         let fileManager = FileManager.default
         // 获取文档目录，如果不存在则创建，并强制解包 URL
-        let documentsDirectory = try! fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        guard let documentsDirectory = try? fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
+            return nil
+        }
         
         // 构建 DownloadedAlbum 目录的 URL
         let destinationURL = documentsDirectory.appendingPathComponent("DownloadedAlbum",isDirectory: true)

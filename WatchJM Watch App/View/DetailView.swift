@@ -9,20 +9,19 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct DetailView: View {
-    let NetWorkManager = Net()
-    let file = File()
     var jmurl: String
-    @State var fileurl: URL? = nil
-    @State var isStartDownload = false
-    @State var album: Album
-    @State var isServerDownloaded = false
-    @State var downloadProgress: Float = 0.0
-    @State var coverURL: URL? = nil
-    
+    @State private var viewModel: DetailViewModel
+
+    init(jmurl: String, album: Album) {
+        self.jmurl = jmurl
+        self._viewModel = State(initialValue: DetailViewModel(album: album))
+    }
+
     var body: some View {
         ScrollView {
             VStack {
-                if album.url != nil {
+                // Cover image
+                if let coverURL = viewModel.coverURL {
                     WebImage(url: coverURL)
                         .resizable()
                         .indicator(.activity)
@@ -32,27 +31,20 @@ struct DetailView: View {
                         .cornerRadius(12)
                         .shadow(radius: 5)
                         .padding(.bottom, 5)
-                } else if album.cover != "" {
-                    WebImage(url: URL(string: jmurl + "/get/cover/" + album.cover))
-                        .resizable()
-                        .indicator(.activity)
-                        .transition(.fade(duration: 0.5))
-                        .scaledToFit()
-                        .frame(maxWidth: .infinity)
-                        .cornerRadius(12)
-                        .shadow(radius: 5)
-                        .padding(.bottom, 5)
+                } else if viewModel.isLoading {
+                    ProgressView()
                 } else {
                     ProgressView()
                 }
-                
-                Text(album.title)
+
+                Text(viewModel.album.title)
                     .font(.title3)
-                
-                if album.tags != [""] {
+
+                // Tags
+                if !viewModel.album.tags.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(album.tags, id: \.self) { tag in
+                            ForEach(viewModel.album.tags, id: \.self) { tag in
                                 Text(tag)
                                     .font(.footnote)
                                     .foregroundStyle(.secondary)
@@ -63,83 +55,71 @@ struct DetailView: View {
                             }
                         }
                     }
-                    if album.url == nil {
-                        if isStartDownload {
-                            if isServerDownloaded {
-                                ProgressView(value: downloadProgress)
-                                    .progressViewStyle(.linear)
-                                    .padding()
-                                Text(String(format: "%f%%", downloadProgress * 100))
-                                    .font(.caption)
-                            } else {
-                                ProgressView()
-                            }
+                }
+
+                // Stats and download section (only when not already downloaded)
+                if viewModel.album.url == nil {
+                    if viewModel.isDownloading {
+                        if viewModel.downloadProgress > 0 {
+                            ProgressView(value: viewModel.downloadProgress)
+                                .progressViewStyle(.linear)
+                                .padding()
+                            Text(String(format: "%.0f%%", viewModel.downloadProgress * 100))
+                                .font(.caption)
+                        } else {
+                            ProgressView("等待服务器处理...")
                         }
-						HStack{
-							Image(systemName: "eye")
-							Text(album.views)
-							Spacer()
-							Image(systemName: "hand.thumbsup")
-							Text(album.likes)
-							Spacer()
-							if album.method! == "html" {
-								Image(systemName: "book.pages")
-								Text(album.page_count+"页")
-							}
-						}
-                        
-                        Button(action: {
-                            isStartDownload = true
-                            Task {
-                                do {
-                                    (fileurl, isServerDownloaded) = try await NetWorkManager.startdownload(jmurl: jmurl, album: album)
-                                    if isServerDownloaded {
-                                        album.url = try await NetWorkManager.downloadAlbum(fileUrl: fileurl!, album: album) { progress in
-                                            self.downloadProgress = progress
-                                        }
-                                    }
-                                } catch {
-                                    print("Download Error: \(error)")
-                                }
-                                
-                                isStartDownload = false
-                                self.downloadProgress = 0.0
-                            }
-                        }, label: {
-                            Text(isStartDownload ? (isServerDownloaded ? "正在下载" : "等待服务器端下载") : "开始下载")
-                        })
-                        .disabled(isStartDownload)
-                        
-                    } else {
-                        NavigationLink(destination: ComicReaderView(folderURL: album.url!)) {
+                    }
+
+                    HStack {
+                        Image(systemName: "eye")
+                        Text("\(viewModel.album.views)")
+                        Spacer()
+                        Image(systemName: "hand.thumbsup")
+                        Text("\(viewModel.album.likes)")
+                        Spacer()
+                        if viewModel.album.method == "html" {
+                            Image(systemName: "book.pages")
+                            Text("\(viewModel.album.page_count)页")
+                        }
+                    }
+
+                    // Error message
+                    if let error = viewModel.errorMessage {
+                        Text(error)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                            .padding(.top, 4)
+                    }
+
+                    // Download button
+                    Button(action: {
+                        Task { await viewModel.startDownload(jmurl: jmurl) }
+                    }, label: {
+                        Text(
+                            viewModel.isDownloading
+                                ? (viewModel.downloadProgress > 0 ? "正在下载" : "等待服务器端下载")
+                                : "开始下载"
+                        )
+                    })
+                    .disabled(viewModel.isDownloading)
+
+                } else {
+                    // Already downloaded — read button
+                    if let url = viewModel.album.url {
+                        NavigationLink(destination: ComicReaderView(folderURL: url)) {
                             Text("开始阅读")
                                 .frame(maxWidth: .infinity)
-                                .buttonStyle(.borderedProminent)
-                                .tint(.green)
                         }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.green)
                     }
                 }
             }
             .onAppear {
                 Task {
-                    do {
-                        if album.tags == [""] {
-                            album = try await NetWorkManager.getInfo(jmurl: jmurl, album: album)
-                        }
-                    } catch {
-                        print(error)
-                    }
-                    do {
-						album.url = try file.isExist(aid: album.aid)
-                        if album.url == nil {
-                            coverURL = URL(string:jmurl + "/get/cover/" + album.cover)
-                        }else{
-							coverURL = try file.coverFinder(aid: album.aid)
-                        }
-                    } catch {
-                        print("OnAppear Error: \(error)")
-                        album.url = nil
-                    }
+                    await viewModel.loadInfo(jmurl: jmurl)
+                    viewModel.checkLocal(jmurl: jmurl)
                 }
             }
         }
