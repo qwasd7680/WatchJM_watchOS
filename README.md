@@ -1,6 +1,6 @@
 ![Swift](https://img.shields.io/badge/Swift-5.9-orange.svg)
 ![watchOS](https://img.shields.io/badge/watchOS-10+-blue.svg)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
+![License](https://img.shields.io/badge/License-GPL--3.0-green.svg)
 
 # WatchJM
 
@@ -78,4 +78,4 @@ WatchJM Watch App/
 
 ## 许可证
 
-MIT License
+GNU General Public License v3.0
